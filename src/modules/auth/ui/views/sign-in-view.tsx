@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OctagonAlert } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaGithub } from "react-icons/fa";
 
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
@@ -48,11 +49,12 @@ const SignInView = () => {
       {
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
           setPending(false); // Reset pending state
-          router.push("/");
+          router.push("/"); // Redirect to home page
         },
         onError: ({ error }) => {
           setPending(false); // Reset pending state
@@ -113,7 +115,7 @@ const SignInView = () => {
                     )}
                   />
                 </div>
-                {error!! && (
+                {!!error && (
                   <Alert className="bg-destructive/10 border-none">
                     <OctagonAlert className="size-4 !text-destructive" />
                     <AlertTitle>{error}</AlertTitle>
@@ -127,30 +129,33 @@ const SignInView = () => {
                     Or continue with
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid">
                   <Button
                     variant="outline"
                     className="w-full"
                     disabled={pending}
+                    onClick={() => {
+                      setPending(true);
+                      setError(null); // Reset error state
+                      authClient.signIn.social(
+                        {
+                          provider: "github",
+                          callbackURL: "/",
+                        },
+                        {
+                          onSuccess: () => {
+                            setPending(false);
+                          },
+                          onError: ({ error }) => {
+                            setPending(false);
+                            setError(error.message);
+                          },
+                        }
+                      );
+                    }}
                   >
-                    <img
-                      src="/google.svg"
-                      alt="Google"
-                      className="size-4 mr-2"
-                    />
-                    Google
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    disabled={pending}
-                  >
-                    <img
-                      src="/github.svg"
-                      alt="GitHub"
-                      className="size-4 mr-2"
-                    />
-                    GitHub
+                    <FaGithub />
+                    Sign in GitHub
                   </Button>
                 </div>
                 <div className="text-center text-sm text-muted-foreground">

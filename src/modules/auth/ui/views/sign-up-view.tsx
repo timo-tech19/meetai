@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OctagonAlert } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaGithub } from "react-icons/fa";
 
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
@@ -58,11 +59,12 @@ const SignUpView = () => {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
           setPending(false); // Reset pending state
-          router.push("/");
+          router.push("/"); // Redirect to home page on success
         },
         onError: ({ error }) => {
           setPending(false); // Reset pending state
@@ -161,44 +163,47 @@ const SignUpView = () => {
                     )}
                   />
                 </div>
-                {error!! && (
+                {!!error && (
                   <Alert className="bg-destructive/10 border-none">
                     <OctagonAlert className="size-4 !text-destructive" />
                     <AlertTitle>{error}</AlertTitle>
                   </Alert>
                 )}
                 <Button type="submit" className="w-full" disabled={pending}>
-                  Sign In
+                  Sign Up
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-card to-muted-foreground relative z-10 px-2">
                     Or continue with
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid">
                   <Button
                     variant="outline"
                     className="w-full"
                     disabled={pending}
+                    onClick={() => {
+                      setPending(true);
+                      setError(null); // Reset error state
+                      authClient.signIn.social(
+                        {
+                          provider: "github",
+                          callbackURL: "/",
+                        },
+                        {
+                          onSuccess: () => {
+                            setPending(false);
+                          },
+                          onError: ({ error }) => {
+                            setPending(false);
+                            setError(error.message);
+                          },
+                        }
+                      );
+                    }}
                   >
-                    <img
-                      src="/google.svg"
-                      alt="Google"
-                      className="size-4 mr-2"
-                    />
-                    Google
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    disabled={pending}
-                  >
-                    <img
-                      src="/github.svg"
-                      alt="GitHub"
-                      className="size-4 mr-2"
-                    />
-                    GitHub
+                    <FaGithub />
+                    Sign up GitHub
                   </Button>
                 </div>
                 <div className="text-center text-sm text-muted-foreground">
