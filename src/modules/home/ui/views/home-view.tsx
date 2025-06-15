@@ -1,6 +1,5 @@
 "use client";
 
-import SignOutButton from "@/components/sign-out-button";
 import { Session, User } from "better-auth";
 
 interface HomeViewProps {
@@ -14,7 +13,6 @@ const HomeView = ({ session }: HomeViewProps) => {
   return (
     <div>
       <h1>Hello {session?.user.name}</h1>
-      <SignOutButton />
     </div>
   );
 };
