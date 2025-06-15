@@ -1,18 +1,16 @@
 "use client";
 
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { Session, User } from "better-auth";
 
-interface HomeViewProps {
-  session?: {
-    session: Session;
-    user: User;
-  };
-}
+const HomeView = () => {
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.hello.queryOptions({ text: "Timo" }));
 
-const HomeView = ({ session }: HomeViewProps) => {
   return (
     <div>
-      <h1>Hello {session?.user.name}</h1>
+      <h1>{data?.greeting}</h1>
     </div>
   );
 };
