@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { SearchParams } from "nuqs";
 
-import AgentsView from "@/modules/agents/ui/views/agents-views";
+import AgentsView from "@/modules/agents/ui/views/agents-view";
 import { getQueryClient, trpc } from "@/trpc/server";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
